@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Script from "next/script";
 import { Nunito, Baloo_2 } from "next/font/google";
 import "./globals.css";
 
@@ -16,7 +17,8 @@ t.src=v;s=b.getElementsByTagName(e)[0];
 s.parentNode.insertBefore(t,s)}(window,document,'script',
 'https://connect.facebook.net/en_US/fbevents.js');
 fbq('init','${metaPixelId}');
-fbq('track','PageView');`;
+fbq('track','PageView');
+`;
 
 export const metadata: Metadata = {
   title: "DestravaTexto | Mapas de Interpretação",
@@ -26,9 +28,19 @@ export const metadata: Metadata = {
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   return (
     <html lang="pt-BR">
-      <head><script dangerouslySetInnerHTML={{ __html: metaPixelCode }} /></head>
       <body className={`${nunito.variable} ${baloo.variable}`}>
-        <noscript><img height="1" width="1" style={{ display: "none" }} src={`https://www.facebook.com/tr?id=${metaPixelId}&ev=PageView&noscript=1`} alt="" /></noscript>
+        <Script id="meta-pixel" strategy="afterInteractive">
+          {`${metaPixelCode}`}
+        </Script>
+        <noscript>
+          <img
+            height="1"
+            width="1"
+            style={{ display: "none" }}
+            src={`https://www.facebook.com/tr?id=${metaPixelId}&ev=PageView&noscript=1`}
+            alt=""
+          />
+        </noscript>
         {children}
       </body>
     </html>
