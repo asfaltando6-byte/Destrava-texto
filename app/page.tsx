@@ -1,4 +1,5 @@
 import { PurchaseNotifications } from "./purchase-notifications";
+import Image from "next/image";
 
 const checkout = "#oferta";
 const checkoutUrl = "https://checkout.payt.com.br/c07e670b7bc8ebfdd99f4091ff2410ff";
@@ -45,7 +46,7 @@ export default function Home() {
         </div>
         <div className="hero-mockup">
           <div className="doodle d1">★</div><div className="doodle d2">✎</div><div className="doodle d3">●</div>
-          <img src="/mapas-infantis-mockup.webp" alt="Coleção de mapas mentais infantis coloridos" width="1200" height="800" fetchPriority="high" decoding="async" />
+          <Image src="/mapas-infantis-mockup.webp" alt="Coleção de mapas mentais infantis coloridos" width={1200} height={800} priority sizes="(max-width: 820px) 100vw, 900px" />
           <div className="mockup-stamp"><b>120</b><span>MAPAS<br/>PRONTOS</span></div>
         </div>
         <CTA />
@@ -60,7 +61,7 @@ export default function Home() {
       <section className="materials section soft" id="materiais">
         <div className="section-heading"><span>VEJA O QUE VOCÊ RECEBE</span><h2>Mapas diferentes para cada desafio de leitura</h2><p>Deslize para conhecer alguns exemplos da biblioteca.</p></div>
         <div className="carousel-window" aria-label="Exemplos dos mapas mentais">
-          <div className="materials-track">{doubledSamples.map((item,i)=><figure className={`product-slide${item.landscape ? " landscape" : ""}`} key={`${item.src}-${i}`}><img src={item.src} alt={i < productSamples.length ? item.alt : ""} width={item.landscape ? 1200 : 850} height={item.landscape ? 800 : 1200} loading="lazy" decoding="async"/></figure>)}</div>
+          <div className="materials-track">{doubledSamples.map((item,i)=><figure className={`product-slide${item.landscape ? " landscape" : ""}`} key={`${item.src}-${i}`}><Image src={item.src} alt={i < productSamples.length ? item.alt : ""} width={item.landscape ? 1200 : 850} height={item.landscape ? 800 : 1200} loading="lazy" sizes={item.landscape ? "(max-width: 480px) 430px, 560px" : "(max-width: 480px) 300px, 340px"}/></figure>)}</div>
         </div>
         <div className="carousel-hint">← o carrossel passa automaticamente →</div>
         <div className="samples-more">Esses e <strong>muuuuito mais!</strong></div>
@@ -111,7 +112,7 @@ export default function Home() {
         <div className="offer-card">
           <div className="recommended">ACESSO COMPLETO</div>
           <div className="offer-head"><span className="mini-brand-mark"><span className="unlock-icon small"><b>✓</b></span></span><div><small>COLEÇÃO DIGITAL</small><h2>DestravaTexto</h2></div></div>
-          <div className="offer-mockup"><img src="/mapas-infantis-mockup.webp" alt="Mockup da coleção DestravaTexto com mapas mentais infantis" width="1200" height="800" loading="lazy" decoding="async"/><span>120 mapas + 3 bônus</span></div>
+          <div className="offer-mockup"><Image src="/mapas-infantis-mockup.webp" alt="Mockup da coleção DestravaTexto com mapas mentais infantis" width={1200} height={800} loading="lazy" sizes="(max-width: 600px) 90vw, 480px"/><span>120 mapas + 3 bônus</span></div>
           <ul><li>✓ <b>120 mapas mentais infantis</b></li><li>✓ Temas variados de interpretação</li><li>✓ Arquivos prontos para imprimir</li><li>✓ 3 bônus exclusivos</li><li>✓ Acesso imediato e vitalício</li></ul>
           <div className="old-price">De R$ 47,00 por apenas:</div>
           <div className="price"><small>R$</small>17<sup>,00</sup></div>

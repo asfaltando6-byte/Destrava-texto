@@ -2,13 +2,6 @@
 
 import { useEffect, useMemo, useState } from "react";
 
-type Purchase = {
-  id: string;
-  firstName: string;
-  productName: string;
-  paidAt: number;
-};
-
 type Activity = {
   visits30m: number;
   offerClicks24h: number;
@@ -25,7 +18,6 @@ function makeId() {
 }
 
 export function PurchaseNotifications() {
-  const [purchases, setPurchases] = useState<Purchase[]>([]);
   const [activity, setActivity] = useState<Activity>({ visits30m: 0, offerClicks24h: 0 });
   const [active, setActive] = useState(0);
 
@@ -36,37 +28,33 @@ export function PurchaseNotifications() {
 
     async function send(kind: "visit" | "offer_click") {
       const id = kind === "visit" ? `${sessionId}:visit` : `${sessionId}:click:${makeId()}`;
-      await fetch("/api/activity", {
+      const response = await fetch("/api/activity", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ id, sessionId, kind }),
       });
+      if (response.ok && !cancelled) setActivity(await response.json() as Activity);
     }
 
     async function refresh() {
       try {
-        const [activityResponse, purchasesResponse] = await Promise.all([
-          fetch("/api/activity", { cache: "no-store" }),
-          fetch("/api/purchases", { cache: "no-store" }),
-        ]);
+        const activityResponse = await fetch("/api/activity", { cache: "no-store" });
         if (cancelled) return;
         if (activityResponse.ok) setActivity(await activityResponse.json() as Activity);
-        if (purchasesResponse.ok) {
-          const data = await purchasesResponse.json() as { purchases?: Purchase[] };
-          setPurchases(data.purchases ?? []);
-        }
       } catch {
         // Mantém o aviso oculto quando os dados reais não estão disponíveis.
       }
     }
 
-    send("visit").then(refresh).catch(refresh);
+    send("visit").catch(refresh);
     const clickHandler = (event: MouseEvent) => {
       const target = event.target as Element | null;
       if (target?.closest("a.cta, a.buy-button")) send("offer_click").then(refresh).catch(() => {});
     };
     document.addEventListener("click", clickHandler);
-    const poller = window.setInterval(refresh, 12_000);
+    const poller = window.setInterval(() => {
+      if (document.visibilityState === "visible") refresh();
+    }, 30_000);
     return () => {
       cancelled = true;
       document.removeEventListener("click", clickHandler);
@@ -96,18 +84,14 @@ export function PurchaseNotifications() {
         { id: "clicks-4", icon: "💜", title: "A oferta do DestravaTexto está recebendo visitas", detail: `${accesses} nas últimas 24 horas` },
       );
     }
-    purchases.slice(0, 3).forEach((purchase) => items.push(
-      { id: `${purchase.id}-1`, icon: "✓", title: `${purchase.firstName} comprou o ${purchase.productName}`, detail: "Compra aprovada pela Cakto" },
-      { id: `${purchase.id}-2`, icon: "🎉", title: `${purchase.firstName} acabou de garantir o acesso`, detail: "Pedido real confirmado" },
-    ));
     return items;
-  }, [activity, purchases]);
+  }, [activity]);
 
   useEffect(() => {
     if (notices.length < 2) return;
     const rotator = window.setInterval(
       () => setActive((current) => (current + 1) % notices.length),
-      3_800,
+      4_800,
     );
     return () => window.clearInterval(rotator);
   }, [notices.length]);
